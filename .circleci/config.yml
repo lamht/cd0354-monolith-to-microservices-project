@@ -13,7 +13,7 @@ commands: # a reusable command with parameters
           command: |
             cd <<parameters.image-name>>
             DOCKER_PATH="thanhlam00290/<<parameters.image-name>>"
-            DOCKER_TAG="0.0.${CIRCLE_WORKFLOW_ID:0:7}"
+            DOCKER_TAG="${CIRCLE_WORKFLOW_ID:0:7}"
             docker --version
             docker build -t $DOCKER_PATH:$DOCKER_TAG .
             docker login -p ${DOCKER_PASSWORD} -u ${DOCKER_USERNAME}
