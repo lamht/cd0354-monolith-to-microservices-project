@@ -8,17 +8,17 @@ commands: # a reusable command with parameters
       image-name:
         type: string
     steps:
-      - run: echo "Hello <<parameters.image-name>>"
       - run:
           name: Build image <<parameters.image-name>>
           command: |
             cd <<parameters.image-name>>
             DOCKER_PATH="thanhlam00290/<<parameters.image-name>>"
+            DOCKER_TAG = 0.0.${CIRCLE_BUILD_NUM:0:7}
             docker --version
-            docker build -t $DOCKER_PATH:${CIRCLE_BUILD_NUM:0:7} .
+            docker build -t $DOCKER_PATH:${DOCKER_TAG} .
             docker login -p ${DOCKER_PASSWORD} -u ${DOCKER_USERNAME}
-            docker push $DOCKER_PATH:${CIRCLE_BUILD_NUM:0:7}
-            docker tag $DOCKER_PATH:${CIRCLE_BUILD_NUM:0:7} $DOCKER_PATH:latest
+            docker push $DOCKER_PATH:${DOCKER_TAG}
+            docker tag $DOCKER_PATH:${DOCKER_TAG} $DOCKER_PATH:latest
             docker push $DOCKER_PATH:latest
 
 # Define a job to be invoked later in a workflow.
