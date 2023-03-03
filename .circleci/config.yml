@@ -2,6 +2,24 @@
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
+commands: # a reusable command with parameters
+  buid-image:
+    parameters:
+      name:
+        type: string
+    steps:
+      - run:
+          name: Build image <<parameters.name>>
+          command: |
+            cd <<parameters.name>>
+            DOCKER_PATH="thanhlam00290/<<parameters.name>>"
+            docker --version
+            docker build -t $DOCKER_PATH:${CIRCLE_BUILD_NUM:0:7} .
+            docker login -p ${DOCKER_PASSWORD} -u ${DOCKER_USERNAME}
+            docker push $DOCKER_PATH:${CIRCLE_BUILD_NUM:0:7}
+            docker tag $DOCKER_PATH:${CIRCLE_BUILD_NUM:0:7} $DOCKER_PATH:latest
+            docker push $DOCKER_PATH:latest
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -24,19 +42,42 @@ jobs:
     steps:
       - checkout 
       - setup_remote_docker     
-      - run:
-          name: Build feed api
-          command: |
-            cd udagram-api-feed
-            DOCKER_PATH="thanhlam00290/udagram-api-feed"
-            docker --version
-            docker build -t $DOCKER_PATH:${CIRCLE_WORKFLOW_ID:0:7} .
-            docker login -p ${DOCKER_PASSWORD} -u ${DOCKER_USERNAME}
-            docker push $DOCKER_PATH:${CIRCLE_WORKFLOW_ID:0:7}
+      - buid-image:
+          name: udagram-api-feed
 
+  build-user:
+    docker:
+      - image: docker:latest
+    steps:
+      - checkout 
+      - setup_remote_docker     
+      - buid-image:
+          name: udagram-api-user
+
+  build-frontend:
+    docker:
+      - image: docker:latest
+    steps:
+      - checkout 
+      - setup_remote_docker     
+      - buid-image:
+          name: udagram-frontend
+
+  build-udagram-reverseproxy:
+    docker:
+      - image: docker:latest
+    steps:
+      - checkout 
+      - setup_remote_docker     
+      - buid-image:
+          name: udagram-reverseproxy
+  
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   build-workflow:
     jobs:
       - build-feed
+      - build-user
+      - build-frontend
+      - build-udagram-reverseproxy
