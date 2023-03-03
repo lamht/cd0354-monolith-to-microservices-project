@@ -17,10 +17,26 @@ jobs:
       - run:
           name: "Say hello"
           command: "echo Hello, World!"
+  
+  build-feed:
+    docker:
+      - image: docker:latest
+    steps:
+      - checkout 
+      - setup_remote_docker     
+      - run:
+          name: Build feed api
+          command: |
+            cd udagram-api-feed
+            DOCKER_PATH="thanhlam00290/udagram-api-feed"
+            docker --version
+            docker build -t $DOCKER_PATH:${CIRCLE_WORKFLOW_ID:0:7} .
+            docker login -p ${DOCKER_PASSWORD} -u ${DOCKER_USERNAME}
+            docker push $DOCKER_PATH:${CIRCLE_WORKFLOW_ID:0:7}
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  say-hello-workflow:
+  build-workflow:
     jobs:
-      - say-hello
+      - build-feed
