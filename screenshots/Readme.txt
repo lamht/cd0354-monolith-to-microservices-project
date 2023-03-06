@@ -13,6 +13,6 @@ aws eks update-kubeconfig   --region us-east-1   --name udacity-dev-project03
 kubectl expose deployment reverseproxy --type=LoadBalancer --name=publicreverseproxy
 kubectl expose deployment frontend --type=LoadBalancer --name=publicfrontend
 
-kubectl autoscale deployment backend --cpu-percent=50 --min=1 --max=10
+kubectl autoscale deployment frontend --cpu-percent=50 --min=1 --max=10
 
 aws eks update-kubeconfig --name udacity-dev-project03-1 --region=us-east-1
