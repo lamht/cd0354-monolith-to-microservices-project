@@ -8,5 +8,11 @@ https://hub.docker.com/repository/docker/thanhlam00290/udagram-api-feed/general
 https://hub.docker.com/repository/docker/thanhlam00290/udagram-api-user/general
 https://hub.docker.com/repository/docker/thanhlam00290/udagram-reverseproxy/general
 
-eksctl create cluster --name udacity-dev-project03 --region=us-east-1
+eksctl create cluster --name udacity-dev-project03-1 --region=us-east-1 --nodes-min=2 --nodes-max=3
 aws eks update-kubeconfig   --region us-east-1   --name udacity-dev-project03
+kubectl expose deployment reverseproxy --type=LoadBalancer --name=publicreverseproxy
+kubectl expose deployment frontend --type=LoadBalancer --name=publicfrontend
+
+kubectl autoscale deployment backend --cpu-percent=50 --min=1 --max=10
+
+aws eks update-kubeconfig --name udacity-dev-project03-1 --region=us-east-1
