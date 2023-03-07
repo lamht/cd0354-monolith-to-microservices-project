@@ -14,5 +14,9 @@ kubectl expose deployment reverseproxy --type=LoadBalancer --name=publicreversep
 kubectl expose deployment frontend --type=LoadBalancer --name=publicfrontend
 
 kubectl autoscale deployment frontend --cpu-percent=50 --min=1 --max=10
+kubectl autoscale deployment backend-feed --cpu-percent=50 --min=1 --max=10
 
 aws eks update-kubeconfig --name udacity-dev-project03-1 --region=us-east-1
+
+kubectl create secret generic env-secret --from-literal=db-username=postgres --from-literal=db-password=xxxx
+kubectl create secret generic aws-secret --from-file=config=s3-permission.txt
