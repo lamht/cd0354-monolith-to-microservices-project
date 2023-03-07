@@ -13,6 +13,8 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   }
 
   const tokenBearer = req.headers.authorization.split(' ');
+  console.log(req.headers.authorization)
+  console.log(tokenBearer);
   if (tokenBearer.length != 2) {
     return res.status(401).send({message: 'Malformed token.'});
   }
