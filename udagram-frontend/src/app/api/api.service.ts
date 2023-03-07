@@ -28,7 +28,9 @@ export class ApiService {
   }
 
   setAuthToken(token) {
-    this.httpOptions.headers = this.httpOptions.headers.append('Authorization', `jwt ${token}`);
+    this.httpOptions = {
+      headers: new HttpHeaders({'Content-Type': 'application/json', 'Authorization': `jwt ${token}`})
+    };
     this.token = token;
   }
 
